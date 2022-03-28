@@ -42,7 +42,7 @@ function [par, ta, xa] = swingup(par)
                 % use s for discretized state
                 sP = discretize_state(x, par);
                 aP = execute_policy(Q, sP, par);
-                reward = observe_reward(a, sP, par);
+                reward = observe_reward(a, s, par);
                 Q = update_Q(Q, s, a, reward, sP, aP, par);
                 s = sP;
                 a = aP;
@@ -165,11 +165,29 @@ function u = take_action(a, par)
     u = (a-1)*step3-par.maxtorque;
 end
 
+% function r = observe_reward(a, sP, par)
+%     % TODO: Calculate the reward for taking action a,
+%     % TODO: resulting in state sP.
+%     if (a == ceil(par.actions/2)) & (sP(1) == ceil(par.pos_states/2)) & (sP(2) == ceil(par.vel_states/2)) 
+%         r = 50;   
+%     else
+%         r = 0;
+%     end
+% end
+
 function r = observe_reward(a, sP, par)
     % TODO: Calculate the reward for taking action a,
     % TODO: resulting in state sP.
     if (a == ceil(par.actions/2)) & (sP(1) == ceil(par.pos_states/2)) & (sP(2) == ceil(par.vel_states/2)) 
         r = 50;
+    elseif (a >= ceil(par.actions*3/4)) & (sP(1) <= ceil(par.pos_states*1/4)) & (sP(2) >= ceil(par.vel_states/2))
+        r = 2;
+    elseif (a <= ceil(par.actions*1/4)) & (sP(1) >= ceil(par.pos_states*3/4)) & (sP(2) <= ceil(par.vel_states/2))
+        r = 2;
+    elseif (a <= ceil(par.actions*1/2) & a >= ceil(par.actions*1/4)) & (sP(1) >= ceil(par.pos_states*1/4) & sP(1) <= ceil(par.pos_states*1/2)) & (sP(2) >= ceil(par.vel_states/2))
+        r = 1;
+    elseif (a <= ceil(par.actions*3/4) & a >= ceil(par.actions*1/2)) & (sP(1) >= ceil(par.pos_states*1/2) & sP(1) <= ceil(par.pos_states*3/4)) & (sP(2) <= ceil(par.vel_states/2))
+        r = 1;
     else
         r = 0;
     end
