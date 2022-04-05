@@ -23,13 +23,15 @@ function [par, ta, xa] = swingup(par)
 
             % TODO: Initialize the inner loop
             x = swingup_initial_state();
-            s = discretize_state(x, par);
-            a = execute_policy(Q, s, par);
+            % s = discretize_state(x, par);
+            % a = execute_policy(Q, s, par);
             
             % Inner loop: simulation steps
             for tt = 1:ceil(par.simtime/par.simstep)
                 
                 % TODO: obtain torque
+                s = discretize_state(x, par);
+                a = execute_policy(Q, s, par);
                 u = take_action(a, par);
                 
                 % Apply torque and obtain new state
@@ -42,16 +44,19 @@ function [par, ta, xa] = swingup(par)
                 % use s for discretized state
                 sP = discretize_state(x, par);
                 aP = execute_policy(Q, sP, par);
-                reward = observe_reward(a, s, par);
+                reward = observe_reward(a, sP, par);
                 Q = update_Q(Q, s, a, reward, sP, aP, par);
-                s = sP;
-                a = aP;
+                % s = sP;
+                % a = aP;
                 
                 % Keep track of cumulative reward
                 ra(ii) = ra(ii)+reward;
 
                 % TODO: check termination condition
                 t = is_terminal(sP, par);
+                if t == 1
+                    break;
+                end
             end
 
             tta(ii) = tta(ii) + tt*par.simstep;
@@ -140,7 +145,8 @@ end
 
 function Q = init_Q(par)
     % TODO: Initialize the Q table.
-    Q = zeros(31,31,5);
+%     Q = zeros(par.pos_states,par.vel_states,par.actions);
+    Q = 1*ones(par.pos_states,par.vel_states,par.actions);
 end
 
 function s = discretize_state(x, par)
@@ -165,33 +171,33 @@ function u = take_action(a, par)
     u = (a-1)*step3-par.maxtorque;
 end
 
-% function r = observe_reward(a, sP, par)
-%     % TODO: Calculate the reward for taking action a,
-%     % TODO: resulting in state sP.
-%     if (a == ceil(par.actions/2)) & (sP(1) == ceil(par.pos_states/2)) & (sP(2) == ceil(par.vel_states/2)) 
-%         r = 50;   
-%     else
-%         r = 0;
-%     end
-% end
-
 function r = observe_reward(a, sP, par)
     % TODO: Calculate the reward for taking action a,
     % TODO: resulting in state sP.
-    if (a == ceil(par.actions/2)) & (sP(1) == ceil(par.pos_states/2)) & (sP(2) == ceil(par.vel_states/2)) 
-        r = 50;
-    elseif (a >= ceil(par.actions*3/4)) & (sP(1) <= ceil(par.pos_states*1/4)) & (sP(2) >= ceil(par.vel_states/2))
-        r = 2;
-    elseif (a <= ceil(par.actions*1/4)) & (sP(1) >= ceil(par.pos_states*3/4)) & (sP(2) <= ceil(par.vel_states/2))
-        r = 2;
-    elseif (a <= ceil(par.actions*1/2) & a >= ceil(par.actions*1/4)) & (sP(1) >= ceil(par.pos_states*1/4) & sP(1) <= ceil(par.pos_states*1/2)) & (sP(2) >= ceil(par.vel_states/2))
-        r = 1;
-    elseif (a <= ceil(par.actions*3/4) & a >= ceil(par.actions*1/2)) & (sP(1) >= ceil(par.pos_states*1/2) & sP(1) <= ceil(par.pos_states*3/4)) & (sP(2) <= ceil(par.vel_states/2))
-        r = 1;
+    if (sP(1) == ceil(par.pos_states/2)) & (sP(2) == ceil(par.vel_states/2)) %(a == ceil(par.actions/2)) & 
+        r = 10;   
     else
         r = 0;
     end
 end
+
+% function r = observe_reward(a, sP, par)
+%     % TODO: Calculate the reward for taking action a,
+%     % TODO: resulting in state sP.
+%     if (a == ceil(par.actions/2)) & (sP(1) == ceil(par.pos_states/2)) & (sP(2) == ceil(par.vel_states/2)) 
+%         r = 50;
+%     elseif (a >= ceil(par.actions*3/4)) & (sP(1) <= ceil(par.pos_states*1/4)) & (sP(2) >= ceil(par.vel_states/2))
+%         r = 2;
+%     elseif (a <= ceil(par.actions*1/4)) & (sP(1) >= ceil(par.pos_states*3/4)) & (sP(2) <= ceil(par.vel_states/2))
+%         r = 2;
+%     elseif (a <= ceil(par.actions*1/2) & a >= ceil(par.actions*1/4)) & (sP(1) >= ceil(par.pos_states*1/4) & sP(1) <= ceil(par.pos_states*1/2)) & (sP(2) >= ceil(par.vel_states/2))
+%         r = 1;
+%     elseif (a <= ceil(par.actions*3/4) & a >= ceil(par.actions*1/2)) & (sP(1) >= ceil(par.pos_states*1/2) & sP(1) <= ceil(par.pos_states*3/4)) & (sP(2) <= ceil(par.vel_states/2))
+%         r = 1;
+%     else
+%         r = 0;
+%     end
+% end
 
 function t = is_terminal(sP, par)
     % TODO: Return 1 if state sP is terminal, 0 otherwise.
