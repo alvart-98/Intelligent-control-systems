@@ -53,7 +53,8 @@ for i = 0:Ntests
 
     % robot_animation(t, curr, des);
     % analyze_performance(t, curr, des);
-    datalocal = [wrapToPi(curr.th)',curr.th_d',curr.th_dd',curr.tau_ff'];
+    datalocal = [wrapToPi(des.th)',des.th_d',des.th_dd',curr.tau_ff'];
+%     datalocal = [wrapToPi(curr.th)',curr.th_d',wrapToPi(des.th)',des.th_d',des.th_dd',curr.tau_ff'];
     dataset = [dataset;datalocal(2:end,:)];
 
     % function fit_some_model(des, curr)
@@ -74,6 +75,8 @@ opt.DisplayErrorValues = 1;
 opt.DisplayStepSize = 1;
 fis1 = anfis(dataset(:,1:end-1),opt);
 fis2 = anfis([dataset(:,1:end-2),dataset(:,end)],opt);
+% fis1 = anfis(dataset(:,[1,3,5,7,9,11]),opt);
+% fis2 = anfis([dataset(:,[2,4,6,8,10,12])],opt);
 model.F1 = fis1;
 model.F2 = fis2;
 save 'model_yours.mat' model

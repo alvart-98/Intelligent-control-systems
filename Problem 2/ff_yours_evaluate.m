@@ -18,4 +18,6 @@ function tau_ff = ff_yours_evaluate(th_curr, th_d_curr, th_des, th_d_des, th_dd_
 %     load model_yours model
     states = [wrapToPi(th_des)',th_d_des',th_dd_des'];
     tau_ff = [evalfis(model.F1,states); evalfis(model.F2,states)];
+%     states = [wrapToPi(th_curr)',th_d_curr',wrapToPi(th_des)',th_d_des',th_dd_des'];
+%     tau_ff = [evalfis(model.F1,states([1,3,5,7,9])); evalfis(model.F2,states([2,4,6,8,10]))];
 end

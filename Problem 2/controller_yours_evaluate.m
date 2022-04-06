@@ -54,23 +54,43 @@ for iter = 1:length(rot_vel)
     [RMSE_yours.x(iter), RMSE_yours.th(iter)] = analyze_performance(t, curr, des, false);
 end
 
+%% PLOTS AND AVERAGE RMSEs
+
 load RMSE_PD.mat;
 load RMSE_DYN1.mat;
 load RMSE_DYN2.mat;
-
-subplot(2,1,1);
-plot(rot_vel,[RMSE_yours.x' RMSE_PD.x' RMSE_DYN1.x' RMSE_DYN2.x']);
-ylabel('RMSE x');
-legend('yours','PD','DYN1','DYN2');
-
-subplot(2,1,2);
-plot(rot_vel,[RMSE_yours.th' RMSE_PD.th' RMSE_DYN1.th' RMSE_DYN2.th']);
-ylabel('RMSE th');
-legend('yours','PD','DYN1','DYN2');
-xlabel('rot vel');
 
 fprintf('mean RMSE x\n');
 fprintf('yours %f\n', mean(RMSE_yours.x));
 fprintf('PD %f\n', mean(RMSE_PD.x));
 fprintf('DYN1 %f\n', mean(RMSE_DYN1.x));
 fprintf('DYN2 %f\n', mean(RMSE_DYN2.x));
+
+% print(gcf,'foo.png','-dpng','-r450');
+L = 1;
+Font = 12;
+
+figure(1)
+subplot(2,1,1)
+plot(rot_vel,RMSE_yours.x','k','linewidth',L+0.1)
+hold on
+plot(rot_vel,RMSE_PD.x','b','linewidth',L)
+hold on
+plot(rot_vel,RMSE_DYN1.x','r','linewidth',L)
+hold on
+plot(rot_vel,RMSE_DYN2.x','g','linewidth',L)
+grid on
+ylabel('RMSE x [m]','FontSize',Font,'FontWeight','bold')
+legend({'yours','PD','DYN1','DYN2'},'Location','northeast','Orientation','vertical','FontSize',Font-4)
+subplot(2,1,2);
+plot(rot_vel,RMSE_yours.th','k','linewidth',L+0.1)
+hold on
+plot(rot_vel,RMSE_PD.th','b','linewidth',L)
+hold on
+plot(rot_vel,RMSE_DYN1.th','r','linewidth',L)
+hold on
+plot(rot_vel,RMSE_DYN2.th','g','linewidth',L)
+grid on
+ylabel('RMSE \theta [rad]','FontSize',Font,'FontWeight','bold')
+xlabel('\omega [rad/s]','FontSize',Font,'FontWeight','bold')
+legend({'yours','PD','DYN1','DYN2'},'Location','northeast','Orientation','vertical','FontSize',Font-4)
