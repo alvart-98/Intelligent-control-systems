@@ -6,6 +6,6 @@ function assignment
     
     par.run_type = 'test';
     [par, ta, xa] = swingup(par);
-    
+
     animate_swingup(ta, xa, par)
 end

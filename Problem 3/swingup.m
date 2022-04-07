@@ -4,7 +4,6 @@ function [par, ta, xa] = swingup(par)
     par.simstep = 0.05;   % Simulation time step
     par.maxtorque = 1.5;  % Maximum applicable torque
     
-    
     if strcmp(par.run_type, 'learn')
         %%
         % Obtain SARSA parameters
@@ -23,15 +22,13 @@ function [par, ta, xa] = swingup(par)
 
             % TODO: Initialize the inner loop
             x = swingup_initial_state();
-            % s = discretize_state(x, par);
-            % a = execute_policy(Q, s, par);
+            s = discretize_state(x, par);
+            a = execute_policy(Q, s, par);
             
             % Inner loop: simulation steps
             for tt = 1:ceil(par.simtime/par.simstep)
                 
                 % TODO: obtain torque
-                s = discretize_state(x, par);
-                a = execute_policy(Q, s, par);
                 u = take_action(a, par);
                 
                 % Apply torque and obtain new state
@@ -46,8 +43,8 @@ function [par, ta, xa] = swingup(par)
                 aP = execute_policy(Q, sP, par);
                 reward = observe_reward(a, sP, par);
                 Q = update_Q(Q, s, a, reward, sP, aP, par);
-                % s = sP;
-                % a = aP;
+                s = sP;
+                a = aP;
                 
                 % Keep track of cumulative reward
                 ra(ii) = ra(ii)+reward;
@@ -181,6 +178,7 @@ function r = observe_reward(a, sP, par)
     end
 end
 
+% Second option for reward function:
 % function r = observe_reward(a, sP, par)
 %     % TODO: Calculate the reward for taking action a,
 %     % TODO: resulting in state sP.
@@ -208,7 +206,7 @@ function t = is_terminal(sP, par)
     end
 end
 
-
+% Epsilon-greedy policy
 function a = execute_policy(Q, s, par)
     % TODO: Select an action for state s using the
     % TODO: epsilon-greedy algorithm.
@@ -223,6 +221,18 @@ function a = execute_policy(Q, s, par)
         a = pos_a;
     end
 end
+
+% Greedy policy
+% function a = execute_policy(Q, s, par)
+%     % TODO: Select an action for state s using the
+%     % TODO: greedy algorithm.
+%     pos_a = find(Q(s(1),s(2),:) == max(Q(s(1),s(2),:)));
+%     if length(pos_a) > 1
+%         pos_a_a = round((length(pos_a)-1)*rand(1)+1);
+%         pos_a = pos_a(pos_a_a);
+%     end
+%     a = pos_a;
+% end
 
 function Q = update_Q(Q, s, a, r, sP, aP, par)
     % TODO: Implement the SARSA update rule.

@@ -46,6 +46,7 @@ for iter = 1:length(rot_vel)
     th_d_0 = des.th_d(:,1);
 
     %% SIMULATE ROBOT
+    % IMPORTANT: ADJUST ff_yours_evaluate IN ORDER TO SELECT TYPE 1 OR 2    
     curr = simulate_robot(t, dt, th_0, th_d_0, des, rp, ...
         @(th_curr, th_d_curr, th_des, th_d_des, th_dd_des) ff_yours_evaluate(th_curr, th_d_curr, th_des, th_d_des, th_dd_des, your_parameters), ...
         @(th_curr, th_d_curr, th_des, th_d_des) fb_pd(th_curr, th_d_curr, th_des, th_d_des, Kp, Kd));

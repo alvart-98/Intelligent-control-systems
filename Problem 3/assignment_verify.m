@@ -6,6 +6,9 @@ par.a1 = 1;
 learner = par.learner;
 par = learner.get_parameters(par);
 
+% print(gcf,'foo.png','-dpng','-r450');
+    L = 1;
+    Font = 11;
 
 disp('Sanity checking robot_learning_control');
 
@@ -74,8 +77,8 @@ subaxis(2, 3, 1, 'SV', 0.15, 'SH', 0.1, 'MR', 0.05);
 set(gcf, 'name', 'Test results');
 plot(pc, pd);
 title('Position discretization');
-xlabel('Continuous position');
-ylabel('Discrete position');
+xlabel('Continuous position','FontSize',Font,'FontWeight','bold');
+ylabel('Discrete position','FontSize',Font,'FontWeight','bold');
 ylim([0 32])
 
 disp('......Position discretization is within bounds');
@@ -96,8 +99,8 @@ end
 subaxis(2, 3, 2);
 plot(vc, vd);
 title('Velocity discretization');
-xlabel('Continuous velocity');
-ylabel('Discrete velocity');
+xlabel('Continuous velocity','FontSize',Font,'FontWeight','bold');
+ylabel('Discrete velocity','FontSize',Font,'FontWeight','bold');
 ylim([0 32])
 
 disp('......Velocity discretization is within bounds');
@@ -119,8 +122,8 @@ end
 subaxis(2, 3, 3)
 plot(1:par.actions, td, '.');
 title('Action execution');
-xlabel('Action');
-ylabel('Applied torque');
+xlabel('Action','FontSize',Font,'FontWeight','bold');
+ylabel('Applied torque','FontSize',Font,'FontWeight','bold');
 xlim([0 par.actions])
 ylim([floor(-par.maxtorque) ceil(par.maxtorque)])
 
@@ -146,8 +149,8 @@ r = mean(r, 3)';
 subaxis(2, 3, 1, 2, 2, 1);
 pcolor([r, r(:,end); r(end,:) r(end,end)]);
 title('Average reward');
-xlabel('Position');
-ylabel('Velocity');
+xlabel('Position','FontSize',Font,'FontWeight','bold');
+ylabel('Velocity','FontSize',Font,'FontWeight','bold');
 axis tight
 colorbar
 
@@ -172,8 +175,8 @@ t = t';
 subaxis(2, 3, 6);
 pcolor([t, t(:,end); t(end,:) t(end,end)]);
 title('Termination criterion');
-xlabel('Position');
-ylabel('Velocity');
+xlabel('Position','FontSize',Font,'FontWeight','bold');
+ylabel('Velocity','FontSize',Font,'FontWeight','bold');
 axis tight
 
 disp('...Termination criterion is implemented');
